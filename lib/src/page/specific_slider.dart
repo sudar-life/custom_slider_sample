@@ -15,6 +15,7 @@ class _SpecificSliderBarState extends State<SpecificSliderBar> {
   double width = 0;
   double value = 0.0;
   double level = 0.0;
+
   @override
   void initState() {
     super.initState();
@@ -27,15 +28,33 @@ class _SpecificSliderBarState extends State<SpecificSliderBar> {
     });
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void updatePointer(double pointer) {
+    _setPosition(pointer.clamp(minX, width));
+    _setLevel();
+    _setValue();
+    _update();
   }
+
+  void _setPosition(double value) {
+    position = value;
+  }
+
+  void _setLevel() {
+    level = position / width;
+  }
+
+  void _setValue() {
+    value = level * 10;
+  }
+
+  void _update() => setState(() {});
 
   @override
   Widget build(BuildContext context) {
+    var transformColor = Color.lerp(
+        const Color.fromARGB(255, 141, 20, 2), const Color(0xffF4AA2B), level);
     return Scaffold(
-      appBar: AppBar(title: const Text('Custom Slider')),
+      appBar: AppBar(title: const Text('Specific Slider')),
       body: Center(
         child: SizedBox(
           height: 80,
@@ -48,19 +67,14 @@ class _SpecificSliderBarState extends State<SpecificSliderBar> {
                   value.toStringAsFixed(2),
                   style: TextStyle(
                       fontSize: 23,
-                      color: Color.lerp(Color.fromARGB(255, 141, 20, 2),
-                          const Color(0xffF4AA2B), level),
+                      color: transformColor,
                       fontWeight: FontWeight.bold),
                 ),
                 Expanded(
                   child: Listener(
                     behavior: HitTestBehavior.translucent,
                     onPointerDown: (event) {
-                      setState(() {
-                        position = event.localPosition.dx.clamp(minX, width);
-                        level = position / width;
-                        value = level * 10;
-                      });
+                      updatePointer(event.localPosition.dx);
                     },
                     child: Stack(
                       children: [
@@ -79,8 +93,7 @@ class _SpecificSliderBarState extends State<SpecificSliderBar> {
                           width: position,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
-                            color: Color.lerp(Color.fromARGB(255, 141, 20, 2),
-                                const Color(0xffF4AA2B), level),
+                            color: transformColor,
                           ),
                           child: Positioned.fill(
                             child: Image.asset(
@@ -94,20 +107,13 @@ class _SpecificSliderBarState extends State<SpecificSliderBar> {
                           left: position - 11,
                           child: GestureDetector(
                             onPanUpdate: (details) {
-                              setState(() {
-                                position = (details.delta.dx + position)
-                                    .clamp(minX, width);
-                                level = position / width;
-                                value = level * 10;
-                              });
+                              updatePointer(details.delta.dx + position);
                             },
                             child: SvgPicture.asset(
                               'assets/svg/icons/icon_star.svg',
                               width: 35,
-                              colorFilter: ColorFilter.mode(
-                                  Color.lerp(Color.fromARGB(255, 141, 20, 2),
-                                      const Color(0xffF4AA2B), level)!,
-                                  BlendMode.srcIn),
+                              colorFilter: const ColorFilter.mode(
+                                  Colors.red, BlendMode.srcIn),
                             ),
                           ),
                         )
