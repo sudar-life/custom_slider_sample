@@ -1,5 +1,6 @@
 import 'package:custom_slider_sample/src/page/custom_slider.dart';
 import 'package:custom_slider_sample/src/page/flutter_default_slider.dart';
+import 'package:custom_slider_sample/src/page/specific_slider.dart';
 import 'package:flutter/material.dart';
 
 class App extends StatelessWidget {
@@ -31,6 +32,12 @@ class App extends StatelessWidget {
                 pageChange(context, const ReviewSliderBar());
               },
               child: const Text('Custom Slider'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                pageChange(context, const SpecificSliderBar());
+              },
+              child: const Text('Specific Slider'),
             ),
           ],
         ),

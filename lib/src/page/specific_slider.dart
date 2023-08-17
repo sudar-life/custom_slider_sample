@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class ReviewSliderBar extends StatefulWidget {
-  const ReviewSliderBar({super.key});
+class SpecificSliderBar extends StatefulWidget {
+  const SpecificSliderBar({super.key});
 
   @override
-  State<ReviewSliderBar> createState() => _ReviewSliderBarState();
+  State<SpecificSliderBar> createState() => _SpecificSliderBarState();
 }
 
-class _ReviewSliderBarState extends State<ReviewSliderBar> {
+class _SpecificSliderBarState extends State<SpecificSliderBar> {
   final _parentKey = GlobalKey();
   double position = 7;
   double minX = 7;
   double width = 0;
   double value = 0.0;
-
+  double level = 0.0;
   @override
   void initState() {
     super.initState();
@@ -28,12 +28,17 @@ class _ReviewSliderBarState extends State<ReviewSliderBar> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Custom Slider')),
       body: Center(
         child: SizedBox(
-          height: 45,
+          height: 80,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25),
             child: Column(
@@ -41,10 +46,11 @@ class _ReviewSliderBarState extends State<ReviewSliderBar> {
               children: [
                 Text(
                   value.toStringAsFixed(2),
-                  style: const TextStyle(
-                    fontSize: 20,
-                    color: Color(0xffF4AA2B),
-                  ),
+                  style: TextStyle(
+                      fontSize: 23,
+                      color: Color.lerp(Color.fromARGB(255, 141, 20, 2),
+                          const Color(0xffF4AA2B), level),
+                      fontWeight: FontWeight.bold),
                 ),
                 Expanded(
                   child: Listener(
@@ -52,7 +58,8 @@ class _ReviewSliderBarState extends State<ReviewSliderBar> {
                     onPointerDown: (event) {
                       setState(() {
                         position = event.localPosition.dx.clamp(minX, width);
-                        value = position / width * 10;
+                        level = position / width;
+                        value = level * 10;
                       });
                     },
                     child: Stack(
@@ -60,7 +67,7 @@ class _ReviewSliderBarState extends State<ReviewSliderBar> {
                         Container(
                           key: _parentKey,
                           margin: const EdgeInsets.only(top: 9),
-                          height: 5,
+                          height: 15,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
                             color: const Color(0xff434343),
@@ -68,11 +75,18 @@ class _ReviewSliderBarState extends State<ReviewSliderBar> {
                         ),
                         Container(
                           margin: const EdgeInsets.only(top: 9),
-                          height: 5,
+                          height: 16,
                           width: position,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
-                            color: const Color(0xffF4AA2B),
+                            color: Color.lerp(Color.fromARGB(255, 141, 20, 2),
+                                const Color(0xffF4AA2B), level),
+                          ),
+                          child: Positioned.fill(
+                            child: Image.asset(
+                              'assets/images/pattern.png',
+                              repeat: ImageRepeat.repeat,
+                            ),
                           ),
                         ),
                         Positioned(
@@ -83,12 +97,17 @@ class _ReviewSliderBarState extends State<ReviewSliderBar> {
                               setState(() {
                                 position = (details.delta.dx + position)
                                     .clamp(minX, width);
-                                value = position / width * 10;
+                                level = position / width;
+                                value = level * 10;
                               });
                             },
                             child: SvgPicture.asset(
                               'assets/svg/icons/icon_star.svg',
-                              width: 22,
+                              width: 35,
+                              colorFilter: ColorFilter.mode(
+                                  Color.lerp(Color.fromARGB(255, 141, 20, 2),
+                                      const Color(0xffF4AA2B), level)!,
+                                  BlendMode.srcIn),
                             ),
                           ),
                         )

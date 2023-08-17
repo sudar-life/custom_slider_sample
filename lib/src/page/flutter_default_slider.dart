@@ -13,7 +13,7 @@ class FlutterDefaultSlider extends StatefulWidget {
 
 class _FlutterDefaultSliderState extends State<FlutterDefaultSlider> {
   double sliderValue = 0;
-  late ui.Image customImage;
+  ui.Image? customImage;
 
   Future<ui.Image> load(String asset) async {
     ByteData data = await rootBundle.load(asset);
@@ -53,26 +53,27 @@ class _FlutterDefaultSliderState extends State<FlutterDefaultSlider> {
                   ),
                 ),
               ),
-              SliderTheme(
-                data: SliderThemeData(
-                  trackHeight: 5.0,
-                  activeTrackColor: const Color(0xffF4AA2B),
-                  inactiveTrackColor: const Color(0xff434343),
-                  thumbShape: SliderThumbImage(customImage),
+              if (customImage != null)
+                SliderTheme(
+                  data: SliderThemeData(
+                    trackHeight: 5.0,
+                    activeTrackColor: const Color(0xffF4AA2B),
+                    inactiveTrackColor: const Color(0xff434343),
+                    thumbShape: SliderThumbImage(customImage!),
+                  ),
+                  child: Slider(
+                    value: sliderValue,
+                    min: 0.0,
+                    max: 10.0,
+                    onChanged: (double newValue) {
+                      setState(
+                        () {
+                          sliderValue = newValue;
+                        },
+                      );
+                    },
+                  ),
                 ),
-                child: Slider(
-                  value: sliderValue,
-                  min: 0.0,
-                  max: 10.0,
-                  onChanged: (double newValue) {
-                    setState(
-                      () {
-                        sliderValue = newValue;
-                      },
-                    );
-                  },
-                ),
-              ),
             ],
           ),
         ),
